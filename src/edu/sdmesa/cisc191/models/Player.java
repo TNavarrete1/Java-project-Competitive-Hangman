@@ -19,21 +19,55 @@
 */
 package edu.sdmesa.cisc191.models;
 
+import java.util.Objects;
+
 /**
  * Purpose: The reponsibility of Player is ...
  *
  * Player is-a ...
  * Player is ...
  */
-public class Player
+public class Player implements Comparable<Player>
 {
 	private String name = "";
+	private int score = 0;
 	
 	Player(String name) {
 		this.name = name;
 	}
+	Player (String name, int score) {
+		this.name = name;
+		this.score = score;
+	}
 	
 	public String getName() {
 		return name;
+	}
+	
+	public int getScore() {
+		return score;
+	}
+	public void setScore(int score) {
+		this.score = score;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null || getClass() != obj.getClass()) return false;
+		
+		Player other = (Player) obj;
+		return name.equals(other.getName());
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(name);
+	}
+	
+	@Override
+	public int compareTo(Player other)
+	{
+		return Integer.compare(score, other.getScore()); // natural ordering
 	}
 }
