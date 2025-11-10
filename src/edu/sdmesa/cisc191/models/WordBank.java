@@ -21,11 +21,16 @@ package edu.sdmesa.cisc191.models;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 
 /**
  * Purpose: The reponsibility of WordBank is ...
@@ -35,113 +40,173 @@ import java.util.Scanner;
  */
 public class WordBank
 {
-	private static final String DEFAULT_WORDS_DIR = "data/words/default";
-	private static final String EXTENDED_WORDS_DIR = "data/words/extended";
-	private Map<String, List<Word>> wordsByCategory = new HashMap<>();
+	private static final String DEFAULT_WORDS_DIR = "words/default";
+	private static final String EXTENDED_WORDS_DIR = "words/extended";
+	private Map<String, Set<Word>> defaultWordsByCategory = new HashMap<>();
+	private Map<String, Set<Word>> extendedWordsByCategory = new HashMap<>();
 	
 	public WordBank() {
-		// TODO: load word bank from txt file
-		loadWordsByCategory();
+		// load word bank from txt files
+		File defaultDir = new File("data/" + DEFAULT_WORDS_DIR);
+		File extendedDir = new File("data/" + EXTENDED_WORDS_DIR);
+		loadWordsByCategory(defaultDir, defaultWordsByCategory);
+		loadWordsByCategory(extendedDir, extendedWordsByCategory);
+	}
+	
+	public WordBank(File sourceDirectory) {
+		// load word bank from source directory
+		File defaultDir = new File(sourceDirectory.getAbsolutePath() + DEFAULT_WORDS_DIR);
+		File extendedDir = new File(sourceDirectory.getAbsolutePath() + EXTENDED_WORDS_DIR);
+		loadWordsByCategory(defaultDir, defaultWordsByCategory);
+		loadWordsByCategory(extendedDir, extendedWordsByCategory);
 	}
 	
 	public boolean addCategory(String category) {
-		/**
-		 * TODO: if category is not present then add it
-		 */
+		if (extendedWordsByCategory.containsKey(category)) return false;
+		
+		extendedWordsByCategory.put(category, new HashSet<>());
 		
 		return true;
 	}
 	
 	public boolean addWord(String category, Word word) {
-		/**
-		 * TODO: if category is not present add category
-		 * might change list to set
-		 * attempt to add word to set
-		 */
+		extendedWordsByCategory.putIfAbsent(category, new HashSet<>());
 		
-		return true;
+		return extendedWordsByCategory.get(category).add(word);
 	}
 	
 	public boolean removeWord(String category, Word word) {
-		/**
-		 * TODO: remove word from category if present
-		 */
+		if (!extendedWordsByCategory.containsKey(category)) return false;
 		
-		return true;
+		return extendedWordsByCategory.get(category).remove(word);
 	}
 	
 	public boolean removeCategory(String category) {
-		/**
-		 * TODO: remove category and remove all words with it
-		 * disallow removal of default categories
-		 * if it is a default category remove the extended words add by user
-		 * I might need two collections one for the default word bank and a
-		 * second for the extended list and additional categories added by user
-		 */
+		if (!extendedWordsByCategory.containsKey(category)) return false;
+		
+		extendedWordsByCategory.remove(category);
 		
 		return true;
 	}
 	
-	public List<String> getCategories() {
-		return new ArrayList<>();
+	public List<String> getAllCategories() {
+		Set<String> categories = new HashSet<>();
+		categories.addAll(defaultWordsByCategory.keySet());
+		categories.addAll(extendedWordsByCategory.keySet());
+		
+		return List.copyOf(new ArrayList<>(categories));
 	}
 	
-	public List<Word> getWords(String category) {
-		return new ArrayList<>();
+	public List<String> getDefaultCategories() {
+		List<String> categories = new ArrayList<>(defaultWordsByCategory.keySet());
+		
+		return List.copyOf(categories);
+	}
+	
+	public List<String> getExtendedCategories() {
+		List<String> categories = new ArrayList<>(extendedWordsByCategory.keySet());
+		
+		return List.copyOf(categories);
+	}
+	
+	public List<Word> getAllWords(String category) {
+		Set<Word> words = new HashSet<>();
+		words.addAll(defaultWordsByCategory.getOrDefault(category, new HashSet<>()));
+		words.addAll(extendedWordsByCategory.getOrDefault(category, new HashSet<>())); 
+		
+		return List.copyOf(new ArrayList<>(words));
+	}
+	
+	public List<Word> getDefaultWords(String category) {
+		List<Word> words = new ArrayList<>(defaultWordsByCategory.getOrDefault(category, new HashSet<>()));
+		
+		return List.copyOf(words);
+	}
+	
+	public List<Word> getExtendedWords(String category) {
+		List<Word> words = new ArrayList<>(extendedWordsByCategory.getOrDefault(category, new HashSet<>()));
+		
+		return List.copyOf(words);
+	}
+	
+	public boolean saveAllWords() {
+		File dir = new File(EXTENDED_WORDS_DIR);
+		List<File> files = getFiles(dir);
+		// delete old files
+		for (File file : files) {
+			file.delete();
+		}
+		
+		List<String> extendedCategories = getExtendedCategories();
+		// create new files
+		for (String category : extendedCategories) {
+			String path = EXTENDED_WORDS_DIR + "/" + category.toLowerCase().replace(" ", "_") + ".txt";
+			try (PrintWriter out = new PrintWriter(new FileWriter(path)))
+			{
+				
+				out.println(category); // first line is category name
+				for (Word word : extendedWordsByCategory.getOrDefault(category, new HashSet<>())) {
+					out.println(word.getText() + "|" + word.getHint()); // word entries
+				}
+			}
+			catch (IOException e)
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	// ** helper functions **
-	private void loadWordsByCategory() {
-		File defaultDir = new File(DEFAULT_WORDS_DIR);
-		File extendedDir = new File(EXTENDED_WORDS_DIR);
-		List<File> files = new ArrayList<>();
-		// get all available files from default and extended sections
-		loadFiles(defaultDir, files);
-		loadFiles(extendedDir, files);
+	private void loadWordsByCategory(File dir, Map<String, Set<Word>> targetMap) {
+
+		// get all available files from directory
+		List<File> files = getFiles(dir);
 		
-		// process each file
-		for (File file : files) {
-			try
-			{
-				Scanner scanner = new Scanner(file);
-				if (!scanner.hasNextLine()) continue; // file is empty go to next file
-				
-				String category = scanner.nextLine(); // first line is category
-				wordsByCategory.putIfAbsent(category, new ArrayList<>());
-				while (scanner.hasNextLine()) {
-					String[] parts = scanner.nextLine().split("|");
-					String word = parts[0];
-					String hint = parts[1];
-					wordsByCategory.get(category).add(new Word(word, hint, word.split("").length));
-				}
-				scanner.close();
-			}
-			catch (FileNotFoundException e)
-			{}
-		}
+		// load all words from files
+		loadWordsFromFiles(files, targetMap);
 	}
 	
-	private void loadFiles(File dir, List<File> files) {
-		if (!dir.exists()) return; // TODO: throw some exception
+	private List<File> getFiles(File dir) {
+		List<File> files = new ArrayList<>();
+		if (!dir.exists()) return files; // TODO: throw some exception
 		
-		if (dir.exists() && !dir.isDirectory()) { // it's a file
+		if (!dir.isDirectory()) { // it's a file
 			files.add(dir);
-			return;
+			return files;
 		}
 		
 		File[] dirFiles = dir.listFiles();
 		if (dirFiles.length == 0) { // empty directory
-			return;
+			return files;
 		}
 		
 		for (File file : dirFiles) {
-			if (file.isDirectory()) { // recursively load sub-directories
-				loadFiles(file, files);
-			}
-			else {
-				files.add(file);
-			}
+			files.add(file);
 		}
 		
+		return files;
+	}
+	
+	private void loadWordsFromFiles(List<File> files, Map<String, Set<Word>> targetMap) {
+		// process each file
+		for (File file : files) {
+			try (Scanner scanner = new Scanner(file))
+			{
+				if (!scanner.hasNextLine()) continue; // file is empty go to next file
+				
+				String category = scanner.nextLine(); // first line is category
+				targetMap.putIfAbsent(category, new HashSet<>());
+				while (scanner.hasNextLine()) {
+					String[] parts = scanner.nextLine().split("\\|");
+					String text = parts[0];
+					String hint = parts[1];
+					Word word = new Word(text, hint);
+					targetMap.get(category).add(word);
+				}
+			}
+			catch (FileNotFoundException e)
+			{}
+		}
 	}
 }

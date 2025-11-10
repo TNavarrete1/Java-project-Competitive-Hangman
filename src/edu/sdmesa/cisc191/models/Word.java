@@ -19,6 +19,10 @@
 */
 package edu.sdmesa.cisc191.models;
 
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
 /**
  * Purpose: The reponsibility of Word is ...
  *
@@ -30,13 +34,15 @@ public class Word
 	private String text = "";
 	private String hint = "";
 	private int score;
+	private Set<Character> charSet = new HashSet<>();
 	
 	public Word() {}
 	
-	public Word(String text, String hint, int score) {
+	public Word(String text, String hint) {
 		this.text = text;
 		this.hint = hint;
-		this.score = score;
+		this.score = calculateScore(text);
+		loadCharSet(text);
 	}
 	
 	public String getText() {
@@ -49,5 +55,51 @@ public class Word
 	
 	public int getScore() {
 		return score;
+	}
+	
+	public boolean contains(char letter) {
+		return charSet.contains(letter);
+	}
+	
+	public boolean isMatch(Set<Character> letters) {
+		return charSet.containsAll(letters) && charSet.size() == letters.size();
+	}
+	
+	@Override
+	public String toString() {
+		return text + "|" + hint + "|" + score;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null || getClass() != obj.getClass()) return false;
+		
+		Word other = (Word) obj;
+		return text.equals(other.getText());
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(text);
+	}
+	
+	private int calculateScore(String text) {
+		String[] parts = text.split(" ");
+		int score = 0;
+		for (String part : parts) {
+			score += part.length();
+		}
+		
+		return score;
+	}
+	
+	private void loadCharSet(String text) {
+		String[] parts = text.split(" ");
+		for (String part : parts) {
+			for (char letter : part.toCharArray()) {
+				charSet.add(letter);
+			}
+		}
 	}
 }
