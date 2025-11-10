@@ -30,9 +30,9 @@ import java.util.Set;
  */
 public class GamesRound
 {
+	private static final int SCORE_PER_TRY = 10;
 	private Word word = new Word();
 	private int triesRemaining = 5;
-	private int score;
 	private Set<Character> lettersGuessedCorrect = new HashSet<>();
 	private Set<Character> lettersGuessedWrong = new HashSet<>();
 	
@@ -41,20 +41,32 @@ public class GamesRound
 	}
 	
 	public boolean makeGuess(char letter) {
-		// TODO: update state
-		return false;
+		if (triesRemaining == 0) return false; // round is over 
+		if (lettersGuessedCorrect.contains(letter) || lettersGuessedWrong.contains(letter)) {
+			return false; // guess was already made once
+		}
+		
+		if (word.contains(letter)) {
+			lettersGuessedCorrect.add(letter);
+		}
+		else {
+			lettersGuessedWrong.add(letter);
+			triesRemaining--;
+		}
+		
+		return true;
 	}
 	
 	public boolean isRoundOver() {
-		return false;
+		return triesRemaining == 0;
 	}
 	
 	public boolean isRoundWon() {
-		return false;
+		return triesRemaining > 0 && word.isMatch(lettersGuessedCorrect);
 	}
 	
 	public int getScore() {
-		return score;
+		return word.getScore() + triesRemaining * SCORE_PER_TRY;
 	}
 	
 	public int getTriesRemaining() {
