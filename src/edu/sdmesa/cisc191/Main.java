@@ -19,6 +19,11 @@
 */
 package edu.sdmesa.cisc191;
 
+import java.util.List;
+
+import edu.sdmesa.cisc191.models.Word;
+import edu.sdmesa.cisc191.models.WordBank;
+
 /**
  * Purpose: The reponsibility of main is ...
  *
@@ -34,8 +39,17 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
-		// TODO Auto-generated method stub
-
+		WordBank wordBank = new WordBank();
+		List<String> categories = wordBank.getAllCategories();
+		for (String category : categories) {
+			System.out.println(category);
+			List<Word> words = wordBank.getAllWords(category);
+			for (Word word : words) {
+				System.out.println(word);
+			}
+		}
+		
+		wordBank.saveAllWords();
 	}
 
 }
