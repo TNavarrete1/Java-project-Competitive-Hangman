@@ -28,7 +28,7 @@ import java.util.Set;
  * GamesRound is-a ...
  * GamesRound is ...
  */
-public class GamesRound
+public class GameRound
 {
 	private static final int SCORE_PER_TRY = 10;
 	private Word word = new Word();
@@ -36,14 +36,23 @@ public class GamesRound
 	private Set<Character> lettersGuessedCorrect = new HashSet<>();
 	private Set<Character> lettersGuessedWrong = new HashSet<>();
 	
-	public GamesRound(Word word) {
-		this.word = word;
+	public GameRound() {}
+	
+	public GameRound(Word word) {
+		this.word = new Word(word);
 	}
 	
-	public boolean makeGuess(char letter) {
-		if (triesRemaining == 0) return false; // round is over 
+	public GameRound(GameRound other) {
+		word = new Word(other.word);
+		triesRemaining = other.triesRemaining;
+		lettersGuessedCorrect = new HashSet<>(other.lettersGuessedCorrect);
+		lettersGuessedWrong = new HashSet<>(other.lettersGuessedWrong);
+	}
+	
+	public void makeGuess(char letter) {
+		if (triesRemaining == 0) return; // round is over 
 		if (lettersGuessedCorrect.contains(letter) || lettersGuessedWrong.contains(letter)) {
-			return false; // guess was already made once
+			return; // guess was already made once
 		}
 		
 		if (word.contains(letter)) {
@@ -53,8 +62,6 @@ public class GamesRound
 			lettersGuessedWrong.add(letter);
 			triesRemaining--;
 		}
-		
-		return true;
 	}
 	
 	public boolean isRoundOver() {
@@ -74,10 +81,10 @@ public class GamesRound
 	}
 	
 	public Set<Character> getLettersGuessedCorrect() {
-		return lettersGuessedCorrect;
+		return new HashSet<>(lettersGuessedCorrect);
 	}
 	
 	public Set<Character> getLettersGuessedWrong() {
-		return lettersGuessedWrong;
+		return new HashSet<>(lettersGuessedWrong);
 	}
 }

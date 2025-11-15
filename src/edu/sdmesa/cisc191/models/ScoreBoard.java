@@ -56,13 +56,18 @@ public class ScoreBoard
 	}
 	
 	public List<Player> getPlayers() {
-		List<Player> players = new ArrayList<>(playerMinHeap);
+		List<Player> players = new ArrayList<>();
+		// deep copy
+		for (Player player : playerMinHeap) {
+			players.add(new Player(player));
+		}
 		Collections.sort(players);
 		
-		return List.copyOf(players);
+		return players;
 	}
 	
 	public boolean addPlayer(Player player) {
+		player = new Player(player); // copy
 		/** 
 		 * TODO: check if player is in score board 
 		 * if they are then remove old score 

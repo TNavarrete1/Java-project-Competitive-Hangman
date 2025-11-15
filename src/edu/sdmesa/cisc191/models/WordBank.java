@@ -94,39 +94,45 @@ public class WordBank
 		categories.addAll(defaultWordsByCategory.keySet());
 		categories.addAll(extendedWordsByCategory.keySet());
 		
-		return List.copyOf(new ArrayList<>(categories));
+		return new ArrayList<>(categories);
 	}
 	
 	public List<String> getDefaultCategories() {
-		List<String> categories = new ArrayList<>(defaultWordsByCategory.keySet());
-		
-		return List.copyOf(categories);
+		return new ArrayList<>(defaultWordsByCategory.keySet());
 	}
 	
 	public List<String> getExtendedCategories() {
-		List<String> categories = new ArrayList<>(extendedWordsByCategory.keySet());
-		
-		return List.copyOf(categories);
+		return new ArrayList<>(extendedWordsByCategory.keySet());
 	}
 	
 	public List<Word> getAllWords(String category) {
 		Set<Word> words = new HashSet<>();
-		words.addAll(defaultWordsByCategory.getOrDefault(category, new HashSet<>()));
-		words.addAll(extendedWordsByCategory.getOrDefault(category, new HashSet<>())); 
+		for (Word word : defaultWordsByCategory.getOrDefault(category, new HashSet<>())) {
+			words.add(new Word(word));
+		}
+		for (Word word : extendedWordsByCategory.getOrDefault(category, new HashSet<>())) {
+			words.add(new Word(word));
+		}
 		
-		return List.copyOf(new ArrayList<>(words));
+		return new ArrayList<>(words);
 	}
 	
 	public List<Word> getDefaultWords(String category) {
-		List<Word> words = new ArrayList<>(defaultWordsByCategory.getOrDefault(category, new HashSet<>()));
+		List<Word> words = new ArrayList<>();
+		for (Word word : defaultWordsByCategory.getOrDefault(category, new HashSet<>())) {
+			words.add(new Word(word));
+		}
 		
-		return List.copyOf(words);
+		return words;
 	}
 	
 	public List<Word> getExtendedWords(String category) {
-		List<Word> words = new ArrayList<>(extendedWordsByCategory.getOrDefault(category, new HashSet<>()));
+		List<Word> words = new ArrayList<>();
+		for (Word word : extendedWordsByCategory.getOrDefault(category, new HashSet<>())) {
+			words.add(new Word(word));
+		}
 		
-		return List.copyOf(words);
+		return words;
 	}
 	
 	public boolean saveAllWords() {

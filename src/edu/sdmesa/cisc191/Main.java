@@ -20,6 +20,8 @@
 package edu.sdmesa.cisc191;
 
 import java.util.List;
+import java.util.Scanner;
+import java.io.File;
 
 import edu.sdmesa.cisc191.models.Word;
 import edu.sdmesa.cisc191.models.WordBank;
@@ -39,17 +41,36 @@ public class Main
 	 */
 	public static void main(String[] args)
 	{
-		WordBank wordBank = new WordBank();
-		List<String> categories = wordBank.getAllCategories();
-		for (String category : categories) {
-			System.out.println(category);
-			List<Word> words = wordBank.getAllWords(category);
-			for (Word word : words) {
-				System.out.println(word);
+//		WordBank wordBank = new WordBank();
+//		List<String> categories = wordBank.getAllCategories();
+//		for (String category : categories) {
+//			System.out.println(category);
+//			List<Word> words = wordBank.getAllWords(category);
+//			for (Word word : words) {
+//				System.out.println(word);
+//			}
+//		}
+//		
+//		wordBank.saveAllWords();
+		
+		// data format: “#word #number”
+		try (Scanner scan = new Scanner(new File("example.txt"))) {
+			while (scan.hasNextLine()) {
+				String word = "";
+				if (scan.hasNext()) {
+					word = scan.next();
+				}
+				int number = 0;
+				if (scan.hasNextInt()) {
+					number = scan.nextInt();
+				}
+				System.out.println(word + " " + number);
 			}
 		}
-		
-		wordBank.saveAllWords();
+		catch (Exception e) {
+			System.out.println("File could not be read");
+		}
+
 	}
 
 }

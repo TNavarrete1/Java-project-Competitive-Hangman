@@ -41,8 +41,15 @@ public class Word
 	public Word(String text, String hint) {
 		this.text = text;
 		this.hint = hint;
-		this.score = calculateScore(text);
-		loadCharSet(text);
+		score = calculateScore(text);
+		charSet = extractCharSet(text);
+	}
+	
+	public Word(Word other) {
+		text = other.text;
+		hint = other.hint;
+		score = other.score;
+		charSet = new HashSet<>(other.charSet);
 	}
 	
 	public String getText() {
@@ -94,12 +101,15 @@ public class Word
 		return score;
 	}
 	
-	private void loadCharSet(String text) {
+	private Set<Character> extractCharSet(String text) {
+		Set<Character> set = new HashSet<>();
 		String[] parts = text.split(" ");
 		for (String part : parts) {
 			for (char letter : part.toCharArray()) {
-				charSet.add(letter);
+				set.add(letter);
 			}
 		}
+		
+		return set;
 	}
 }

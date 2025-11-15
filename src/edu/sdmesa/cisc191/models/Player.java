@@ -32,12 +32,20 @@ public class Player implements Comparable<Player>
 	private String name = "";
 	private int score = 0;
 	
+	Player() {}
+	
 	Player(String name) {
 		this.name = name;
 	}
 	Player (String name, int score) {
 		this.name = name;
 		this.score = score;
+	}
+	
+	// copy constructor
+	Player(Player other) {
+		name = other.name;
+		score = other.score;
 	}
 	
 	public String getName() {
