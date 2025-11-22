@@ -15,17 +15,17 @@
 *
 * <<Add more references here>>
 *
-* Version: 2025-11-14
+* Version: 2025-11-19
 */
-package edu.sdmesa.cisc191.controllers;
+package edu.sdmesa.cisc191.events;
 
 /**
- * Purpose: The reponsibility of Controller is ...
+ * Purpose: The reponsibility of UserAction is ...
  *
- * Controller is-a ...
- * Controller is ...
+ * UserAction is-a ...
+ * UserAction is ...
  */
-public abstract class Controller
+public interface GameEvents
 {
-	public abstract void init();
+	
 }

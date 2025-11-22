@@ -33,19 +33,19 @@ public class Word
 {
 	private String text = "";
 	private String hint = "";
-	private int score;
+	private int score = 0;
 	private Set<Character> charSet = new HashSet<>();
 	
 	public Word() {}
 	
 	public Word(String text, String hint) {
-		this.text = text;
-		this.hint = hint;
-		score = calculateScore(text);
-		charSet = extractCharSet(text);
+		setText(text);
+		setHint(hint);
 	}
 	
 	public Word(Word other) {
+		if (other == null) return;
+		
 		text = other.text;
 		hint = other.hint;
 		score = other.score;
@@ -55,13 +55,26 @@ public class Word
 	public String getText() {
 		return text;
 	}
+	public void setText(String text) {
+		if (text == null) return;
+		this.text = text;
+		score = calculateScore(text);
+		charSet = extractCharSet(text);
+	}
 	
 	public String getHint() {
 		return hint;
 	}
+	public void setHint(String hint) {
+		if (hint == null) return;
+		this.hint = hint;
+	}
 	
 	public int getScore() {
 		return score;
+	}
+	public void setScore() {
+		score = Math.max(0, score);
 	}
 	
 	public boolean contains(char letter) {
@@ -92,6 +105,8 @@ public class Word
 	}
 	
 	private int calculateScore(String text) {
+		if (text == null) return 0;
+		
 		String[] parts = text.split(" ");
 		int score = 0;
 		for (String part : parts) {
@@ -102,6 +117,8 @@ public class Word
 	}
 	
 	private Set<Character> extractCharSet(String text) {
+		if (text == null) return new HashSet<>();
+		
 		Set<Character> set = new HashSet<>();
 		String[] parts = text.split(" ");
 		for (String part : parts) {

@@ -24,4 +24,5 @@
  */
 module CISC191CompetitveHangman
 {
+	requires java.desktop;
 }

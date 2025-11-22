@@ -32,18 +32,22 @@ public class Player implements Comparable<Player>
 	private String name = "";
 	private int score = 0;
 	
-	Player() {}
+	public Player() {}
 	
-	Player(String name) {
-		this.name = name;
+	public Player(String name) {
+		setName(name);
 	}
-	Player (String name, int score) {
-		this.name = name;
-		this.score = score;
+	public Player (String name, int score) {
+		setName(name);
+		setScore(score);
 	}
 	
 	// copy constructor
-	Player(Player other) {
+	public Player(Player other) {
+		if (other == null) {
+			return;
+		}
+		
 		name = other.name;
 		score = other.score;
 	}
@@ -51,12 +55,18 @@ public class Player implements Comparable<Player>
 	public String getName() {
 		return name;
 	}
+	public void setName(String name) {
+		if (name == null) {
+			return;
+		}
+		this.name = name;
+	}
 	
 	public int getScore() {
 		return score;
 	}
 	public void setScore(int score) {
-		this.score = score;
+		this.score = Math.max(0, score);
 	}
 	
 	@Override
@@ -76,6 +86,9 @@ public class Player implements Comparable<Player>
 	@Override
 	public int compareTo(Player other)
 	{
+		if (other == null) {
+			return -1;
+		}
 		return Integer.compare(score, other.getScore()); // natural ordering
 	}
 }

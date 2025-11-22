@@ -15,17 +15,24 @@
 *
 * <<Add more references here>>
 *
-* Version: 2025-11-14
+* Version: 2025-11-15
 */
-package edu.sdmesa.cisc191.controllers;
+package edu.sdmesa.cisc191.views;
+
+import edu.sdmesa.cisc191.events.GameEvents;
 
 /**
- * Purpose: The reponsibility of Controller is ...
+ * Purpose: The reponsibility of View is ...
  *
- * Controller is-a ...
- * Controller is ...
+ * View is-a ...
+ * View is ...
  */
-public abstract class Controller
+public interface View<C extends GameEvents>
 {
-	public abstract void init();
+	public void displayView();
+	/**
+	 * Purpose: 
+	 * @param controller
+	 */
+	void setController(C controller);
 }

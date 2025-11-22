@@ -15,17 +15,20 @@
 *
 * <<Add more references here>>
 *
-* Version: 2025-11-14
+* Version: 2025-11-21
 */
-package edu.sdmesa.cisc191.controllers;
+package edu.sdmesa.cisc191.events;
+
+import javax.swing.JPanel;
 
 /**
- * Purpose: The reponsibility of Controller is ...
+ * Purpose: The reponsibility of MainEvents is ...
  *
- * Controller is-a ...
- * Controller is ...
+ * MainEvents is-a ...
+ * MainEvents is ...
  */
-public abstract class Controller
+public interface MainEvents extends GameEvents
 {
-	public abstract void init();
+	public void onAddView(String name, JPanel view);
+	public void onShowView(String name);
 }

@@ -31,7 +31,7 @@ import java.util.Random;
  */
 public class GameSession
 {
-	private Player player = new Player();
+	private Player player;
 	private List<GameRound> roundHistory = new ArrayList<>();
 	private int score = 0;
 	private int hintsRemaining = 3;
@@ -42,35 +42,45 @@ public class GameSession
 	private int size = 0; // window size I can use to get random word (available words window)
 	private final Random rand = new Random();
 	
-	/**
-	 * Purpose: 
-	 */
-	public GameSession() {}
+	public GameSession() {};
 	
 	public GameSession(Player player,String category, List<Word> words) {
-		this.player = new Player(player);
+		setPlayer(player);
+		setCategory(category);
+		setWords(words);
+	}
+	
+	public GameSession(Player player, int hintsRemaining, String category, List<Word> words) {
+		this(player, category, words);
+		setHintsRemaining(hintsRemaining);
+	}
+	
+	public Player getPlayer() {
+		return new Player(player);
+	}
+	public void setPlayer(Player player) {
+		this.player = player;
+	}
+	
+	public String category() {
+		return category;
+	}
+	public void setCategory(String category) {
+		if (category == null) {
+			return;
+		}
 		this.category = category;
+	}
+	
+	public void setWords(List<Word> words) {
 		for (Word word : words) {
 			this.words.add(new Word(word));
 		}
 		size = words.size();
 	}
 	
-	public GameSession(Player player, int hintsRemaining, String category, List<Word> words) {
-		this(player, category, words);
-		this.hintsRemaining = hintsRemaining;
-	}
-	
-	public Player getPlayer() {
-		return new Player(player);
-	}
-	
-	public void setPlayer(Player player) {
-		this.player = new Player(player);
-	}
-	
-	public String category() {
-		return category;
+	public void setHintsRemaining(int hintsRemaining) {
+		this.hintsRemaining = Math.max(1, hintsRemaining);
 	}
 	
 	public int getScore() {

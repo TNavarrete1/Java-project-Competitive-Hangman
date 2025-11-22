@@ -49,6 +49,14 @@ public class GameRound
 		lettersGuessedWrong = new HashSet<>(other.lettersGuessedWrong);
 	}
 	
+	public void setWord(Word word) {
+		if (word == null) {
+			return;
+		}
+		
+		this.word = word;
+	}
+	
 	public void makeGuess(char letter) {
 		if (triesRemaining == 0) return; // round is over 
 		if (lettersGuessedCorrect.contains(letter) || lettersGuessedWrong.contains(letter)) {

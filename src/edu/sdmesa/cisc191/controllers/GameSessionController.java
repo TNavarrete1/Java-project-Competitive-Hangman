@@ -19,8 +19,12 @@
 */
 package edu.sdmesa.cisc191.controllers;
 
+import edu.sdmesa.cisc191.events.GameSessionEvents;
+import edu.sdmesa.cisc191.events.MainEvents;
 import edu.sdmesa.cisc191.models.GameSession;
+import edu.sdmesa.cisc191.models.Player;
 import edu.sdmesa.cisc191.models.WordBank;
+import edu.sdmesa.cisc191.views.NamePromptView;
 
 /**
  * Purpose: The reponsibility of GameSessionController is ...
@@ -28,31 +32,44 @@ import edu.sdmesa.cisc191.models.WordBank;
  * GameSessionController is-a ...
  * GameSessionController is ...
  */
-public class GameSessionController extends Controller
+public class GameSessionController extends Controller implements GameSessionEvents
 {
-	// TODO: include views
 	private WordBank wordBank = new WordBank();
 	private GameSession gameSession = new GameSession();
 	private Controller gameRoundController = new GameRoundController();
+	private MainEvents mainController;
+	// views
+	private NamePromptView<GameSessionEvents> namePromptView = new NamePromptView<>(this);
+	
 	
 	/**
 	 * Purpose: 
 	 */
-	public GameSessionController()
+	public GameSessionController(MainEvents mainController)
 	{
-	}
-
-	@Override
-	public void handleUserAction(String action)
-	{
-		// TODO Auto-generated method stub
-
+		this.mainController = mainController;
 	}
 
 	@Override
 	public void init()
 	{
-		// TODO: display player name view
+		mainController.onAddView("nameViewPrompt", namePromptView);
+		requestPlayerNameInput();
+	}
+	
+	public void onPlayerNameSubmitted(String playerName) {
+		
+	}
+	
+	private void requestPlayerNameInput() {
+		mainController.onShowView("nameViewPrompt");
+		namePromptView.displayView();
 	}
 
+	@Override
+	public void onPlayerNameEntered(String playerName)
+	{
+		System.out.println("Player name: " + playerName);
+		gameSession.setPlayer(new Player(playerName));
+	}
 }

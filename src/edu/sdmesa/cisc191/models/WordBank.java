@@ -40,25 +40,18 @@ import java.util.Set;
  */
 public class WordBank
 {
-	private static final String DEFAULT_WORDS_DIR = "words/default";
-	private static final String EXTENDED_WORDS_DIR = "words/extended";
+	private static final String DEFAULT_WORDS_DIR = "/words/default";
+	private static final String EXTENDED_WORDS_DIR = "/words/extended";
 	private Map<String, Set<Word>> defaultWordsByCategory = new HashMap<>();
 	private Map<String, Set<Word>> extendedWordsByCategory = new HashMap<>();
 	
 	public WordBank() {
-		// load word bank from txt files
-		File defaultDir = new File("data/" + DEFAULT_WORDS_DIR);
-		File extendedDir = new File("data/" + EXTENDED_WORDS_DIR);
-		loadWordsByCategory(defaultDir, defaultWordsByCategory);
-		loadWordsByCategory(extendedDir, extendedWordsByCategory);
+		File dir = new File("data");
+		loadAllWords(dir);
 	}
 	
 	public WordBank(File sourceDirectory) {
-		// load word bank from source directory
-		File defaultDir = new File(sourceDirectory.getAbsolutePath() + DEFAULT_WORDS_DIR);
-		File extendedDir = new File(sourceDirectory.getAbsolutePath() + EXTENDED_WORDS_DIR);
-		loadWordsByCategory(defaultDir, defaultWordsByCategory);
-		loadWordsByCategory(extendedDir, extendedWordsByCategory);
+		loadAllWords(sourceDirectory);
 	}
 	
 	public boolean addCategory(String category) {
@@ -164,7 +157,30 @@ public class WordBank
 	}
 	
 	// ** helper functions **
-	private void loadWordsByCategory(File dir, Map<String, Set<Word>> targetMap) {
+	private void loadAllWords(File sourceDirectory) {
+		// load word bank from txt files
+		if (defaultWordsByCategory.isEmpty()) {
+			File defaultDir = new File(sourceDirectory + DEFAULT_WORDS_DIR);
+			try {
+				
+				loadWordsByCategory(defaultDir, defaultWordsByCategory);
+			}
+			catch (FileNotFoundException e) {
+				
+			}
+		}
+		if (extendedWordsByCategory.isEmpty()) {	
+			File extendedDir = new File(sourceDirectory + EXTENDED_WORDS_DIR);
+			try {
+				loadWordsByCategory(extendedDir, extendedWordsByCategory);
+			}
+			catch (FileNotFoundException e) {
+				
+			}
+		}
+	}
+	
+	private void loadWordsByCategory(File dir, Map<String, Set<Word>> targetMap) throws FileNotFoundException {
 
 		// get all available files from directory
 		List<File> files = getFiles(dir);
@@ -194,7 +210,7 @@ public class WordBank
 		return files;
 	}
 	
-	private void loadWordsFromFiles(List<File> files, Map<String, Set<Word>> targetMap) {
+	private void loadWordsFromFiles(List<File> files, Map<String, Set<Word>> targetMap) throws FileNotFoundException {
 		// process each file
 		for (File file : files) {
 			try (Scanner scanner = new Scanner(file))
@@ -211,8 +227,6 @@ public class WordBank
 					targetMap.get(category).add(word);
 				}
 			}
-			catch (FileNotFoundException e)
-			{}
 		}
 	}
 }
