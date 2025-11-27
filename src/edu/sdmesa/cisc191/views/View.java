@@ -30,9 +30,6 @@ import edu.sdmesa.cisc191.events.GameEvents;
 public interface View<C extends GameEvents>
 {
 	public void displayView();
-	/**
-	 * Purpose: 
-	 * @param controller
-	 */
-	void setController(C controller);
+	public void setController(C controller);
+	public String getViewIdentifier();
 }

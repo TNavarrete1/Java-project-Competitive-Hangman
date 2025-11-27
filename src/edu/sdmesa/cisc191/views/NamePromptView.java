@@ -31,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import edu.sdmesa.cisc191.events.GameSessionEvents;
 
@@ -46,10 +47,9 @@ public class NamePromptView<C extends GameSessionEvents> extends JPanel implemen
 	 * NamePromptView.java has-a/has-many serialVersionUID
 	 */
 	private static final long serialVersionUID = -3702945622326777104L;
+	private static final String ID = "namePromptView";
 	private C controller;
-	private JLabel promptLabel;
-    private JTextField nameField;
-    private JButton submitButton;
+	JTextField nameField;
 	
 	/**
 	 * Purpose: 
@@ -58,37 +58,46 @@ public class NamePromptView<C extends GameSessionEvents> extends JPanel implemen
 	public NamePromptView(C controller)
 	{
 		setController(controller);
-		setupLayout();
 		setupComponents();
-		setupListeners();
+	}
+	
+	public void reset() {
+		nameField.setText("");
+	}
+	
+	@Override
+	public String getViewIdentifier() {
+		return ID;
 	}
 
 	@Override
 	public void displayView()
 	{
-		nameField.requestFocusInWindow();
+		if (!isVisible()) {
+			controller.onShowView(ID);
+		}
+		revalidate(); // recomputes layout
+		repaint(); // repaints visual changes
+		
+		SwingUtilities.invokeLater(() -> nameField.requestFocusInWindow());
 	}
 	
 	@Override
 	public void setController(C controller)
-	{
-		if (controller == null) return;
-		
+	{		
 		this.controller = controller;
-	}
-
-	private void setupLayout() {
-		setLayout(new GridBagLayout());
-        setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
 	}
 	
 	private void setupComponents() {
-		promptLabel = new JLabel("Enter your name:");
+		setLayout(new GridBagLayout());
+        setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
+        
+		JLabel promptLabel = new JLabel("Enter your name:");
         promptLabel.setFont(new Font("Arial", Font.BOLD, 16));
 
         nameField = new JTextField(15);
 
-        submitButton = new JButton("Start");
+        JButton submitButton = new JButton("Start");
 
         // Layout using GridBag
         GridBagConstraints gbc = new GridBagConstraints();
@@ -101,17 +110,15 @@ public class NamePromptView<C extends GameSessionEvents> extends JPanel implemen
 
         gbc.gridy = 2;
         add(submitButton, gbc);
-	}
-	
-	private void setupListeners() {
+        
+        // listeners
 		submitButton.addActionListener((ActionEvent e) -> submitName());
-
         // allow Enter key to submit
         nameField.addActionListener((ActionEvent e) -> submitName());
 	}
 	
 	private void submitName() {
-        String name = nameField.getText().trim();
+		String name = nameField.getText().trim();
         if (!name.isEmpty()) {
             controller.onPlayerNameEntered(name);
         } else {

@@ -28,19 +28,17 @@ import edu.sdmesa.cisc191.models.Word;
  * GameRoundController is-a ...
  * GameRoundController is ...
  */
-public class GameRoundController extends Controller
+public class GameRoundController implements Controller
 {
 	// TODO: include GameRoundView member
-	private GameRound model = new GameRound(); 
-
-	public GameRoundController() {}
+	private GameRound gameRound;
 	
 	/**
 	 * Purpose: 
 	 */
 	public GameRoundController(Word word)
 	{
-		model = new GameRound(word);
+		gameRound = new GameRound(word);
 	}
 
 	@Override
@@ -49,9 +47,16 @@ public class GameRoundController extends Controller
 		// TODO: display view
 	}
 	
+	@Override
+	public void start()
+	{
+		// TODO Auto-generated method stub
+		
+	}
+	
 	public void makeGuess(Character letter) {
-		model.makeGuess(letter);
-		if (model.isRoundOver()) {
+		gameRound.makeGuess(letter);
+		if (gameRound.isRoundOver()) {
 			endRound();
 		}
 	}
@@ -59,4 +64,6 @@ public class GameRoundController extends Controller
 	public void endRound() {
 		// TODO: implement logic
 	}
+
+
 }

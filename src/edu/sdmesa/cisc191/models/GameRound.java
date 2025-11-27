@@ -31,18 +31,21 @@ import java.util.Set;
 public class GameRound
 {
 	private static final int SCORE_PER_TRY = 10;
-	private Word word = new Word();
+	private Word word;
 	private int triesRemaining = 5;
 	private Set<Character> lettersGuessedCorrect = new HashSet<>();
 	private Set<Character> lettersGuessedWrong = new HashSet<>();
 	
-	public GameRound() {}
-	
 	public GameRound(Word word) {
-		this.word = new Word(word);
+		if (word == null) throw  new IllegalArgumentException();
+		
+		this.word = word;
 	}
 	
 	public GameRound(GameRound other) {
+		if (other == null) throw new IllegalArgumentException();
+		
+		// members should be in a valid state
 		word = new Word(other.word);
 		triesRemaining = other.triesRemaining;
 		lettersGuessedCorrect = new HashSet<>(other.lettersGuessedCorrect);
@@ -50,14 +53,15 @@ public class GameRound
 	}
 	
 	public void setWord(Word word) {
-		if (word == null) {
-			return;
-		}
+		if (word == null) throw new IllegalArgumentException();
 		
 		this.word = word;
 	}
 	
 	public void makeGuess(char letter) {
+		letter = Character.toLowerCase(letter);
+		
+		if (!(letter >= 'a' && letter <= 'z')) return;
 		if (triesRemaining == 0) return; // round is over 
 		if (lettersGuessedCorrect.contains(letter) || lettersGuessedWrong.contains(letter)) {
 			return; // guess was already made once
@@ -81,6 +85,7 @@ public class GameRound
 	}
 	
 	public int getScore() {
+		
 		return word.getScore() + triesRemaining * SCORE_PER_TRY;
 	}
 	

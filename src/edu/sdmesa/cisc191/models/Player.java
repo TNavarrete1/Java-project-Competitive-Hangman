@@ -29,24 +29,22 @@ import java.util.Objects;
  */
 public class Player implements Comparable<Player>
 {
-	private String name = "";
+	private final String name;
 	private int score = 0;
 	
-	public Player() {}
-	
 	public Player(String name) {
-		setName(name);
+		if (name == null || name.isEmpty()) throw new IllegalArgumentException("Player name cannot be null or empty");
+		
+		this.name = name;
 	}
 	public Player (String name, int score) {
-		setName(name);
+		this(name);
 		setScore(score);
 	}
 	
 	// copy constructor
 	public Player(Player other) {
-		if (other == null) {
-			return;
-		}
+		if (other == null) throw new IllegalArgumentException("Player object cannot be null");
 		
 		name = other.name;
 		score = other.score;
@@ -54,12 +52,6 @@ public class Player implements Comparable<Player>
 	
 	public String getName() {
 		return name;
-	}
-	public void setName(String name) {
-		if (name == null) {
-			return;
-		}
-		this.name = name;
 	}
 	
 	public int getScore() {

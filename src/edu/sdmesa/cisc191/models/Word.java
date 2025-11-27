@@ -31,58 +31,56 @@ import java.util.Set;
  */
 public class Word
 {
-	private String text = "";
-	private String hint = "";
-	private int score = 0;
-	private Set<Character> charSet = new HashSet<>();
-	
-	public Word() {}
+	private final String text;
+	private final String hint;
+	private final int score;
+	private final Set<Character> charSet = new HashSet<>();;
 	
 	public Word(String text, String hint) {
-		setText(text);
-		setHint(hint);
+		if (text == null || text.isEmpty()) throw new IllegalArgumentException("Word text cannot be null or empty");
+		if (hint == null || hint.isEmpty()) throw new IllegalArgumentException("Word hint cannot be null or empty");	
+		
+		this.text = text;
+		this.hint = hint;
+		int charLength = 0;
+		for (char c : text.toCharArray()) {
+			c = Character.toLowerCase(c);
+			if (c >= 'a' && c <= 'z') {
+				charSet.add(c);
+				charLength++;
+			}
+		}
+		score = charLength;
 	}
 	
 	public Word(Word other) {
-		if (other == null) return;
+		if (other == null) throw new IllegalArgumentException("Word object cannot be null");
 		
 		text = other.text;
 		hint = other.hint;
 		score = other.score;
-		charSet = new HashSet<>(other.charSet);
+		charSet.addAll(other.charSet);
 	}
 	
 	public String getText() {
 		return text;
 	}
-	public void setText(String text) {
-		if (text == null) return;
-		this.text = text;
-		score = calculateScore(text);
-		charSet = extractCharSet(text);
-	}
 	
 	public String getHint() {
 		return hint;
-	}
-	public void setHint(String hint) {
-		if (hint == null) return;
-		this.hint = hint;
 	}
 	
 	public int getScore() {
 		return score;
 	}
-	public void setScore() {
-		score = Math.max(0, score);
-	}
 	
 	public boolean contains(char letter) {
+		letter = Character.toLowerCase(letter);
 		return charSet.contains(letter);
 	}
 	
 	public boolean isMatch(Set<Character> letters) {
-		return charSet.containsAll(letters) && charSet.size() == letters.size();
+		return charSet.size() == letters.size() && letters.containsAll(charSet);
 	}
 	
 	@Override
@@ -102,31 +100,5 @@ public class Word
 	@Override
 	public int hashCode() {
 		return Objects.hash(text);
-	}
-	
-	private int calculateScore(String text) {
-		if (text == null) return 0;
-		
-		String[] parts = text.split(" ");
-		int score = 0;
-		for (String part : parts) {
-			score += part.length();
-		}
-		
-		return score;
-	}
-	
-	private Set<Character> extractCharSet(String text) {
-		if (text == null) return new HashSet<>();
-		
-		Set<Character> set = new HashSet<>();
-		String[] parts = text.split(" ");
-		for (String part : parts) {
-			for (char letter : part.toCharArray()) {
-				set.add(letter);
-			}
-		}
-		
-		return set;
 	}
 }

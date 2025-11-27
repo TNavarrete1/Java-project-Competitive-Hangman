@@ -31,4 +31,8 @@ public interface MainEvents extends GameEvents
 {
 	public void onAddView(String name, JPanel view);
 	public void onShowView(String name);
+	public void onStartNewGame();
+	public void onGoToScoreBoard();
+	public void onGoToAddWords();
+	public void onGoToMenu();
 }

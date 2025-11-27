@@ -20,6 +20,7 @@
 package edu.sdmesa.cisc191.models;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -31,56 +32,39 @@ import java.util.Random;
  */
 public class GameSession
 {
-	private Player player;
-	private List<GameRound> roundHistory = new ArrayList<>();
+	private final Player player;
+	private final String category;
 	private int score = 0;
 	private int hintsRemaining = 3;
-	private String category = "";
+	private final List<GameRound> roundHistory = new ArrayList<>();
 	
 	// members needed for efficient random word bag
-	private List<Word> words = new ArrayList<>(); // available words
+	private final List<Word> words = new ArrayList<>(); // available words
 	private int size = 0; // window size I can use to get random word (available words window)
 	private final Random rand = new Random();
 	
-	public GameSession() {};
-	
 	public GameSession(Player player,String category, List<Word> words) {
-		setPlayer(player);
-		setCategory(category);
-		setWords(words);
+		if (player == null) throw new IllegalArgumentException("Player cannot be null");
+		if (category == null || category.isEmpty()) throw new IllegalArgumentException("Category cannot be null or empty");
+		if (words == null || words.isEmpty()) throw new IllegalArgumentException("Word list cannot be null or empty");
+		
+		this.player = new Player(player);
+		this.category = category;
+		this.words.addAll(words);
+		size = words.size();
 	}
 	
-	public GameSession(Player player, int hintsRemaining, String category, List<Word> words) {
+	public GameSession(Player player, String category, List<Word> words, int hintsRemaining) {
 		this(player, category, words);
-		setHintsRemaining(hintsRemaining);
+		this.hintsRemaining = Math.max(0, Math.min(5, hintsRemaining)); // range is 0-5
 	}
 	
 	public Player getPlayer() {
 		return new Player(player);
 	}
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
 	
-	public String category() {
+	public String getCategory() {
 		return category;
-	}
-	public void setCategory(String category) {
-		if (category == null) {
-			return;
-		}
-		this.category = category;
-	}
-	
-	public void setWords(List<Word> words) {
-		for (Word word : words) {
-			this.words.add(new Word(word));
-		}
-		size = words.size();
-	}
-	
-	public void setHintsRemaining(int hintsRemaining) {
-		this.hintsRemaining = Math.max(1, hintsRemaining);
 	}
 	
 	public int getScore() {
@@ -93,11 +77,12 @@ public class GameSession
 			rounds.add(new GameRound(round));
 		}
 		
-		return rounds;
+		return Collections.unmodifiableList(rounds);
 	}
 	
 	public void addRound(GameRound round) {
 		roundHistory.add(new GameRound(round));
+		score += round.getScore();
 	}
 	
 	public Word getNextWord() {
@@ -119,7 +104,7 @@ public class GameSession
 		}
 		size--;
 		
-		return new Word(randomWord);
+		return randomWord;
 	}
 	
 	// can be used to determine if game session is done

@@ -25,7 +25,8 @@ package edu.sdmesa.cisc191.controllers;
  * Controller is-a ...
  * Controller is ...
  */
-public abstract class Controller
+public interface Controller
 {
-	public abstract void init();
+	public void init();
+	public void start();
 }

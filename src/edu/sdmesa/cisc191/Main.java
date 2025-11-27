@@ -46,6 +46,7 @@ public class Main
 	{
 		Controller controller = new MainController();
 		controller.init();
+		controller.start();
 	}
 
 }

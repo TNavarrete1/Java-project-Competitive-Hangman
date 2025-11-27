@@ -17,15 +17,15 @@
 *
 * Version: 2025-11-21
 */
-package edu.sdmesa.cisc191.controllers;
+package edu.sdmesa.cisc191.views;
 
 import java.awt.CardLayout;
+import java.awt.Dimension;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import edu.sdmesa.cisc191.events.MainEvents;
-import edu.sdmesa.cisc191.views.View;
 
 /**
  * Purpose: The reponsibility of MainView is ...
@@ -33,25 +33,19 @@ import edu.sdmesa.cisc191.views.View;
  * MainView is-a ...
  * MainView is ...
  */
-public class MainView<C extends MainEvents> extends JFrame implements View<C>
+public class MainView<C extends MainEvents> extends JFrame
 {
-	private C controller;
+	/**
+	 * MainView.java has-a/has-many serialVersionUID
+	 */
+	private static final long serialVersionUID = -8713538786022097491L;
 	private CardLayout layout = new CardLayout();
 	private JPanel container = new JPanel(layout);
 	
-	public MainView(C controller) {
-		setController(controller);
+	public MainView() {
 		setupLayout();
 	}
 
-	@Override
-	public void setController(C controller)
-	{
-		if (controller == null) return;
-		this.controller = controller;
-	}
-
-	@Override
 	public void displayView()
 	{
 		setVisible(true);
@@ -67,10 +61,10 @@ public class MainView<C extends MainEvents> extends JFrame implements View<C>
 	}
 	
 	private void setupLayout() {
+		setContentPane(container);
 		setTitle("Competitive Hangman");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setSize(600, 400);
+		setMinimumSize(new Dimension(1050, 700));
 		setLocationRelativeTo(null);
-		setContentPane(container);
 	}
 }

@@ -22,6 +22,10 @@ package edu.sdmesa.cisc191.controllers;
 import javax.swing.JPanel;
 
 import edu.sdmesa.cisc191.events.MainEvents;
+import edu.sdmesa.cisc191.views.MainView;
+import edu.sdmesa.cisc191.views.MenuView;
+
+import edu.sdmesa.cisc191.models.WordBank;
 
 /**
  * Purpose: The reponsibility of MainController is ...
@@ -29,19 +33,32 @@ import edu.sdmesa.cisc191.events.MainEvents;
  * MainController is-a ...
  * MainController is ...
  */
-public class MainController extends Controller implements MainEvents
+public class MainController implements Controller, MainEvents
 {
-	Controller gameSessionController = new GameSessionController(this);
-	// views
-	MainView<MainController> mainView = new MainView<>(this);
+	WordBank wordBank = new WordBank();
+	// view
+	MainView<MainEvents> mainView;
+	MenuView<MainEvents> menuView;
+	// controller
+	Controller gameSessionController = new GameSessionController(this, wordBank);
 	
 	public MainController() {}
 
 	@Override
 	public void init()
 	{
-		mainView.displayView();
+		// create views
+		mainView = new MainView<>(); // root view
+		menuView = new MenuView<>(this);
+		//register views
+		mainView.addView(menuView.getViewIdentifier(), menuView);
 		gameSessionController.init();
+	}
+	
+	@Override
+	public void start() {
+		menuView.displayView();
+		mainView.displayView();
 	}
 
 	@Override
@@ -54,6 +71,30 @@ public class MainController extends Controller implements MainEvents
 	public void onShowView(String name)
 	{
 		mainView.showView(name);
+	}
+
+	@Override
+	public void onStartNewGame()
+	{
+		gameSessionController.start();
+	}
+
+	@Override
+	public void onGoToScoreBoard()
+	{
+		System.out.println("ScoreBoard");
+	}
+
+	@Override
+	public void onGoToAddWords()
+	{
+		System.out.println("AddWords");
+	}
+
+	@Override
+	public void onGoToMenu()
+	{
+		menuView.displayView();
 	}
 
 }

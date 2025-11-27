@@ -19,6 +19,8 @@
 */
 package edu.sdmesa.cisc191.events;
 
+import javax.swing.JPanel;
+
 /**
  * Purpose: The reponsibility of GameSessionEvents is ...
  *
@@ -26,6 +28,11 @@ package edu.sdmesa.cisc191.events;
  * GameSessionEvents is ...
  */
 public interface GameSessionEvents extends GameEvents
-{
+{	
 	public void onPlayerNameEntered(String playerName);
+	public void onCategorySelected(String category);
+	public void onStartNewGame();
+	public void onGoToMenu();
+	public void onAddView(String name, JPanel view);
+	public void onShowView(String name);
 }
