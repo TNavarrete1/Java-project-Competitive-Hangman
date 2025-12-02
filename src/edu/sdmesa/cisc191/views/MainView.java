@@ -64,7 +64,7 @@ public class MainView<C extends MainEvents> extends JFrame
 		setContentPane(container);
 		setTitle("Competitive Hangman");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setMinimumSize(new Dimension(1050, 700));
+		setMinimumSize(new Dimension(700, 1050));
 		setLocationRelativeTo(null);
 	}
 }

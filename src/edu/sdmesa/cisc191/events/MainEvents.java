@@ -21,6 +21,8 @@ package edu.sdmesa.cisc191.events;
 
 import javax.swing.JPanel;
 
+import edu.sdmesa.cisc191.models.Player;
+
 /**
  * Purpose: The reponsibility of MainEvents is ...
  *
@@ -35,4 +37,5 @@ public interface MainEvents extends GameEvents
 	public void onGoToScoreBoard();
 	public void onGoToAddWords();
 	public void onGoToMenu();
+	public void onEndGameSession(Player player);
 }

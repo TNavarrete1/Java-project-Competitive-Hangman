@@ -15,28 +15,21 @@
 *
 * <<Add more references here>>
 *
-* Version: 2025-11-19
+* Version: 2025-11-26
 */
 package edu.sdmesa.cisc191.events;
 
 import javax.swing.JPanel;
 
-import edu.sdmesa.cisc191.models.GameRound;
-
 /**
- * Purpose: The reponsibility of GameSessionEvents is ...
+ * Purpose: The reponsibility of GameRoundEvents is ...
  *
- * GameSessionEvents is-a ...
- * GameSessionEvents is ...
+ * GameRoundEvents is-a ...
+ * GameRoundEvents is ...
  */
-public interface GameSessionEvents extends GameEvents
-{	
-	public void onPlayerNameEntered(String playerName);
-	public void onCategorySelected(String category);
-	public void onStartNewGame();
-	public void onGoToMenu();
-	public void onAddView(String name, JPanel view);
-	public void onShowView(String name);
+public interface GameRoundEvents extends GameEvents
+{
+	public void onMakeGuess(char letter);
 	public void onUseHint();
-	public void onEndRound(GameRound gameRound);
+	public void onShowView(String name);
 }

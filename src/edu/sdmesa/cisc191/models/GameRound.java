@@ -30,11 +30,14 @@ import java.util.Set;
  */
 public class GameRound
 {
+	public static final int TRIES_PER_ROUND = 6;
 	private static final int SCORE_PER_TRY = 10;
 	private Word word;
-	private int triesRemaining = 5;
+	private int triesRemaining = TRIES_PER_ROUND;
 	private Set<Character> lettersGuessedCorrect = new HashSet<>();
 	private Set<Character> lettersGuessedWrong = new HashSet<>();
+	private boolean isRoundOver_ = false;
+	private boolean isRoundWon_ = false;
 	
 	public GameRound(Word word) {
 		if (word == null) throw  new IllegalArgumentException();
@@ -52,6 +55,10 @@ public class GameRound
 		lettersGuessedWrong = new HashSet<>(other.lettersGuessedWrong);
 	}
 	
+	public Word getWord() {
+		return word;
+	}
+	
 	public void setWord(Word word) {
 		if (word == null) throw new IllegalArgumentException();
 		
@@ -59,10 +66,13 @@ public class GameRound
 	}
 	
 	public void makeGuess(char letter) {
+		if (isRoundOver_) {
+			return;
+		}
+		
 		letter = Character.toLowerCase(letter);
 		
 		if (!(letter >= 'a' && letter <= 'z')) return;
-		if (triesRemaining == 0) return; // round is over 
 		if (lettersGuessedCorrect.contains(letter) || lettersGuessedWrong.contains(letter)) {
 			return; // guess was already made once
 		}
@@ -74,18 +84,29 @@ public class GameRound
 			lettersGuessedWrong.add(letter);
 			triesRemaining--;
 		}
+		
+		// update wining/losing conditions
+		if (triesRemaining == 0) {
+			isRoundOver_ = true;
+		}
+		else if (triesRemaining > 0 && word.isMatch(lettersGuessedCorrect)) {
+			isRoundOver_ = true;
+			isRoundWon_ = true;
+		}
 	}
 	
 	public boolean isRoundOver() {
-		return triesRemaining == 0;
+		return isRoundOver_;
 	}
 	
 	public boolean isRoundWon() {
-		return triesRemaining > 0 && word.isMatch(lettersGuessedCorrect);
+		return isRoundWon_;
 	}
 	
 	public int getScore() {
-		
+		if (isRoundOver_ && !isRoundWon_) {
+			return 0;
+		}
 		return word.getScore() + triesRemaining * SCORE_PER_TRY;
 	}
 	

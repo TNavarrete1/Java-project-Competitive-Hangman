@@ -24,7 +24,7 @@ import javax.swing.JPanel;
 import edu.sdmesa.cisc191.events.MainEvents;
 import edu.sdmesa.cisc191.views.MainView;
 import edu.sdmesa.cisc191.views.MenuView;
-
+import edu.sdmesa.cisc191.models.Player;
 import edu.sdmesa.cisc191.models.WordBank;
 
 /**
@@ -37,8 +37,8 @@ public class MainController implements Controller, MainEvents
 {
 	WordBank wordBank = new WordBank();
 	// view
-	MainView<MainEvents> mainView;
-	MenuView<MainEvents> menuView;
+	MainView<MainController> mainView;
+	MenuView<MainController> menuView;
 	// controller
 	Controller gameSessionController = new GameSessionController(this, wordBank);
 	
@@ -95,6 +95,13 @@ public class MainController implements Controller, MainEvents
 	public void onGoToMenu()
 	{
 		menuView.displayView();
+	}
+
+	@Override
+	public void onEndGameSession(Player player)
+	{
+		menuView.displayView();
+		// attempt to add score to scoreboard
 	}
 
 }

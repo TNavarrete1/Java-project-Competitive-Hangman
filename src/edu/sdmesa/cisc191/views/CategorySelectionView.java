@@ -123,7 +123,7 @@ public class CategorySelectionView<C extends GameSessionEvents> extends JPanel i
 		// north
 		// title label
 		JLabel label = new JLabel("Choose a category", SwingConstants.CENTER);
-		label.setBorder(BorderFactory.createEmptyBorder(40,20,20,20));
+		label.setBorder(BorderFactory.createEmptyBorder(40,20,30,20));
 		label.setFont(new Font("Arial", Font.BOLD, 22));
 		add(label, BorderLayout.NORTH);
 		// center

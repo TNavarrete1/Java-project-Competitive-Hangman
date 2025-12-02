@@ -71,6 +71,10 @@ public class GameSession
 		return score;
 	}
 	
+	public int getHintsRemaining() {
+		return hintsRemaining;
+	}
+	
 	public List<GameRound> getRoundHistory() {
 		List<GameRound> rounds = new ArrayList<>();
 		for (GameRound round : roundHistory) {

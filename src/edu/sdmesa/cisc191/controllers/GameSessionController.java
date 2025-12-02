@@ -19,12 +19,15 @@
 */
 package edu.sdmesa.cisc191.controllers;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import edu.sdmesa.cisc191.events.GameSessionEvents;
 import edu.sdmesa.cisc191.events.MainEvents;
+import edu.sdmesa.cisc191.models.GameRound;
 import edu.sdmesa.cisc191.models.GameSession;
 import edu.sdmesa.cisc191.models.Player;
+import edu.sdmesa.cisc191.models.Word;
 import edu.sdmesa.cisc191.models.WordBank;
 import edu.sdmesa.cisc191.views.CategorySelectionView;
 import edu.sdmesa.cisc191.views.GameSessionView;
@@ -40,15 +43,15 @@ public class GameSessionController implements Controller, GameSessionEvents
 {
 	private WordBank wordBank;
 	private GameSession gameSession;
-	private boolean hasGameStartedOnce = false;
 	private Player player;
+	private boolean hasGameStartedOnce = false;
 	// controllers
-	private Controller gameRoundController;
+	private GameRoundController gameRoundController = new GameRoundController(this);
 	private MainEvents mainController;
 	// views 
-	private GameSessionView<GameSessionEvents> gameSessionView;
-	private NamePromptView<GameSessionEvents> namePromptView;
-	private CategorySelectionView<GameSessionEvents> categorySelectionView;
+	private GameSessionView<GameSessionController> gameSessionView;
+	private NamePromptView<GameSessionController> namePromptView;
+	private CategorySelectionView<GameSessionController> categorySelectionView;
 	
 	/**
 	 * Purpose: 
@@ -90,9 +93,21 @@ public class GameSessionController implements Controller, GameSessionEvents
 	public void onCategorySelected(String category)
 	{
 		System.out.println("Category: " + category);
+		// create game session
 		gameSession = new GameSession(player, category, wordBank.getAllWords(category));
 		
-		// show game round
+		// update view
+		gameSessionView.setCategory(category);
+		gameSessionView.setScore(0);
+		// display header
+		gameSessionView.showHeader();
+		
+		// TODO: get word from game session
+		Word word = gameSession.getNextWord();
+		// TODO: create new round with word
+		gameRoundController.createRound(word);
+		// TODO: start round
+		gameRoundController.start();
 	}
 
 	@Override
@@ -125,21 +140,65 @@ public class GameSessionController implements Controller, GameSessionEvents
 		}
 	}
 	
-	private void requestPlayerNameInput() {
-		namePromptView.displayView();
+	@Override
+	public void onUseHint()
+	{
+		gameSession.useHint();
+		if (gameSession.getHintsRemaining() == 0) {
+			gameRoundController.disableHints();
+		}
+	}
+	
+	@Override
+	public void onEndRound(GameRound gameRound) {
+		// updates score and adds round to session round history
+		gameSession.addRound(gameRound);
+		player.setScore(gameSession.getScore());
+		
+		// update game session header
+		gameSessionView.setScore(gameSession.getScore());
+		
+		if (gameRound.isRoundWon() && !gameSession.hasMoreWords()) {
+			System.out.println("No more words");
+			// show message to player
+			JOptionPane.showMessageDialog(
+					gameSessionView,
+					"Congratulations! There are no more words left to guess\nSession score: " + player.getScore(),
+					"You Win",
+					JOptionPane.INFORMATION_MESSAGE
+			);
+			
+			// notify parent controller
+			mainController.onEndGameSession(player);
+			return;
+		}
+		else if (!gameRound.isRoundWon()) {
+			JOptionPane.showMessageDialog(
+					gameSessionView,
+					"Better luck next time!\nSession score: " + player.getScore(),
+					"Game Over",
+					JOptionPane.INFORMATION_MESSAGE
+			);
+			mainController.onEndGameSession(player);
+			return;
+		}
+		
+		Word word = gameSession.getNextWord();
+		gameRoundController.createRound(word);
 	}
 	
 	private void startNewGame() {
 		if (!hasGameStartedOnce) {
 			hasGameStartedOnce = true;
 		}
-		else {
+		else { // reset everything
 			reset();
+			gameRoundController.reset();
 		}
 		// show game session view
 		gameSessionView.displayView();
-		// show category card
-		requestPlayerNameInput();
+		// show name card
+		namePromptView.displayView();
 	}
 	
 	private void reset() {
@@ -147,5 +206,6 @@ public class GameSessionController implements Controller, GameSessionEvents
 		categorySelectionView.setCategories(wordBank.getAllCategories());
 		// reset views that need reset
 		namePromptView.reset();
+		gameSessionView.reset();
 	}
 }

@@ -26,7 +26,9 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import edu.sdmesa.cisc191.events.GameSessionEvents;
 
@@ -46,11 +48,33 @@ public class GameSessionView<C extends GameSessionEvents> extends JPanel impleme
 	private C controller;
 	private CardLayout layout;
 	private JPanel container;
-	private JPanel footer;
+	private JLabel categoryLabel;
+	private JLabel scoreLabel;
+	private JPanel header;
 	
 	public GameSessionView(C controller) {
+		if (controller == null) {
+			throw new IllegalArgumentException("Controller can not be null");
+		}
 		setController(controller);
 		setupComponents();
+		
+		// make sure shared components were created
+		if (layout == null) {
+			throw new IllegalStateException("Layout has not been initialized");
+		}
+		if (container == null) {
+			throw new IllegalStateException("Container has not been initialized");
+		}
+		if (categoryLabel == null) {
+			throw new IllegalStateException("Category label has not been initialized");
+		}
+		if (scoreLabel == null) {
+			throw new IllegalStateException("Score label has not been initialized");
+		}
+		if (header == null) {
+			throw new IllegalStateException("Header panel has not been initialized");
+		}
 	}
 	
 	@Override
@@ -73,7 +97,20 @@ public class GameSessionView<C extends GameSessionEvents> extends JPanel impleme
 	private void setupComponents() {
 		// wrapper container layout
 		setLayout(new BorderLayout());
-		BorderFactory.createEmptyBorder(20,0,20,0);
+		setBorder(BorderFactory.createEmptyBorder(20,0,20,0));
+		
+		// header
+		header = new JPanel(new BorderLayout());
+		header.setVisible(false);
+		header.setBorder(BorderFactory.createEmptyBorder(0,20,30,20));
+		categoryLabel = new JLabel("Category");
+		categoryLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		categoryLabel.setFont(new Font("Arial", Font.BOLD, 28));
+		scoreLabel = new JLabel("Score: 0");
+		scoreLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		scoreLabel.setFont(new Font("Arial", Font.BOLD, 18));
+		header.add(categoryLabel, BorderLayout.CENTER);
+		header.add(scoreLabel, BorderLayout.NORTH);
 		
 		// card layout 
 		layout = new CardLayout();
@@ -81,10 +118,9 @@ public class GameSessionView<C extends GameSessionEvents> extends JPanel impleme
 		container = new JPanel(layout);
 		
 		// footer
-		footer = new JPanel();
+		JPanel footer = new JPanel();
+		footer.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 		
-		add(container, BorderLayout.CENTER);
-		add(footer, BorderLayout.SOUTH);
 		
 		JButton newGameButton = new JButton("New Game");
 		JButton menuButton = new JButton("Menu");
@@ -97,6 +133,10 @@ public class GameSessionView<C extends GameSessionEvents> extends JPanel impleme
 		
 		footer.add(newGameButton);
 		footer.add(menuButton);
+		
+		add(header, BorderLayout.NORTH);
+		add(container, BorderLayout.CENTER);
+		add(footer, BorderLayout.SOUTH);
 	}
 	
 	public void addView(String name, JPanel view) {
@@ -108,4 +148,32 @@ public class GameSessionView<C extends GameSessionEvents> extends JPanel impleme
 		layout.show(container, name);
 	}
 
+	public void setCategory(String category) {
+		if (category == null || category.isEmpty()) {
+			throw new IllegalArgumentException("Category can not be null or empty");
+		}
+		categoryLabel.setText(category);
+		revalidate();
+		repaint();
+	}
+	
+	public void setScore(int score) {
+		scoreLabel.setText("Score: " + String.valueOf(score));
+		revalidate();
+		repaint();
+	}
+	
+	public void showHeader() {
+		header.setVisible(true);
+		revalidate();
+		repaint();
+	}
+	
+	public void reset() {
+		categoryLabel.setText("Category");
+		scoreLabel.setText("Score: 0");
+		header.setVisible(false);
+		revalidate();
+		repaint();
+	}
 }

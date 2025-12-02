@@ -75,10 +75,10 @@ public class MenuView<C extends MainEvents> extends JPanel implements View<C>
 	
 	private void setupComponents() {
 		setLayout(new BorderLayout());
-		setBorder(BorderFactory.createEmptyBorder(40,20,20,20));
+		setBorder(BorderFactory.createEmptyBorder(20,0,20,0));
 		// header
 		JLabel header = new JLabel("Competitive Hangman", SwingConstants.CENTER);
-		header.setBorder(BorderFactory.createEmptyBorder(0,0,20,0));
+		header.setBorder(BorderFactory.createEmptyBorder(40,20,30,20));
 		header.setFont(new Font("Arial", Font.BOLD, 28));
 		add(header, BorderLayout.NORTH);
 		
